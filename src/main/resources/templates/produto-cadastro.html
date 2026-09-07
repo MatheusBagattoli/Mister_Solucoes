@@ -1,26 +1,216 @@
 <!doctype html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Cadastro de Produto - Mister Soluções</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet">
 </head>
+
 <body class="bg-light">
+
 <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+
     <div class="container">
-        <a class="navbar-brand" th:href="@{/home}">Mister Soluções</a>
-        <a class="btn btn-outline-light" th:href="@{/logout}">Sair</a>
+
+        <a class="navbar-brand" th:href="@{/home}">
+            Mister Soluções
+        </a>
+
+        <a class="btn btn-outline-light" th:href="@{/logout}">
+            Sair
+        </a>
+
     </div>
+
 </nav>
+
 <main class="container py-5">
+
     <div class="card shadow-sm">
+
         <div class="card-body p-4">
-            <h1 class="h3">Cadastro de Produto</h1>
-            <p class="text-muted">Tela de acesso ao cadastro de produtos.</p>
-            <a class="btn btn-secondary" th:href="@{/home}">Voltar para a Home</a>
+
+            <h1 class="h3 mb-2">
+                Cadastro de Produto
+            </h1>
+
+            <p class="text-muted mb-4">
+                Cadastre um novo produto no sistema.
+            </p>
+
+            <form th:action="${editando} ? @{/produto/editar} : @{/produto/cadastrar}"
+                        th:object="${produto}" method="post">
+
+                <input type="hidden" th:field="*{id}">
+
+                <!-- NOME -->
+
+                <div class="mb-3">
+
+                    <label for="nome" class="form-label">
+                        Nome do produto
+                    </label>
+
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="nome"
+                            th:field="*{nome}"
+                            placeholder="Digite o nome do produto"
+                            required>
+
+                </div>
+
+
+                <!-- DESCRIÇÃO -->
+
+                <div class="mb-3">
+
+                    <label for="descricao" class="form-label">
+                        Descrição
+                    </label>
+
+                    <textarea
+                            class="form-control"
+                            id="descricao"
+                            th:field="*{descricao}"
+                            rows="4"
+                            placeholder="Digite a descrição do produto">
+                    </textarea>
+
+                </div>
+
+
+                <!-- PREÇO -->
+
+                <div class="mb-4">
+
+                    <label for="preco" class="form-label">
+                        Preço
+                    </label>
+
+                    <input
+                            type="number"
+                            class="form-control"
+                            id="preco"
+                            th:field="*{preco}"
+                            step="0.01"
+                            min="0"
+                            placeholder="0,00"
+                            required>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary"
+                            th:text="${editando} ? 'Salvar alterações' : 'Cadastrar produto'">
+                        Cadastrar produto
+                    </button>
+
+                    <a
+                            class="btn btn-secondary"
+                            th:href="@{/home}">
+                        Voltar
+                    </a>
+
+                </div>
+
+            </form>
+
+            <hr class="my-5">
+
+            <h2 class="h4 mb-3">
+                Produtos cadastrados
+            </h2>
+
+            <div class="table-responsive">
+
+                <table class="table table-striped table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="produto : ${produtos}">
+
+                        <td th:text="${produto.id}"></td>
+
+                        <td th:text="${produto.nome}"></td>
+
+                        <td th:text="${produto.descricao}"></td>
+
+                        <td>
+                            R$
+                            <span th:text="${#numbers.formatDecimal(produto.preco, 1, 2)}">0,00
+                        </span>
+
+                        </td>
+
+                        <td>
+
+                            <a class="btn btn-sm btn-warning"
+                               th:href="@{/produto/editar/{id}(id=${produto.id})}">
+                                Editar
+                            </a>
+
+                            <form th:action="@{/produto/excluir/{id}(id=${produto.id})}"
+                                  method="post"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-danger">
+                                    Excluir
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(produtos)}">
+
+                        <td colspan="4" class="text-center text-muted py-4">
+                            Nenhum produto cadastrado.
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
         </div>
+
     </div>
+
 </main>
+
 </body>
 </html>
