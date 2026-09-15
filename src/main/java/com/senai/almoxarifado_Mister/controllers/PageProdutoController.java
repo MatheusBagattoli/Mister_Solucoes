@@ -46,6 +46,11 @@ public class PageProdutoController {
             return "redirect:/login";
         }
 
+        // SOMENTE ADM PODE ACESSAR A PÁGINA DE EDIÇÃO
+        if (!"ADM".equals(usuarioLogado.getPerfil())) {
+            return "redirect:/produto/cadastro?erro=semPermissao";
+        }
+
         ProdutoEntity produto = produtoRepository.findById(id).orElse(null);
 
         if (produto == null) {

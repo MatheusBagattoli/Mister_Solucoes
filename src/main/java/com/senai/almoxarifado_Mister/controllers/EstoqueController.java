@@ -1,18 +1,80 @@
 package com.senai.almoxarifado_Mister.controllers;
 
-import com.senai.almoxarifado_Mister.repositories.EstoqueRepository;
+import com.senai.almoxarifado_Mister.services.EstoqueService;
+import com.senai.almoxarifado_Mister.sessao.SessaoDto;
+import com.senai.almoxarifado_Mister.sessao.SessaoUtil;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/estoque")
 public class EstoqueController {
 
-    private final EstoqueRepository estoqueRepository;
+    private final EstoqueService estoqueService;
 
-    public EstoqueController(EstoqueRepository estoqueRepository) {
-        this.estoqueRepository = estoqueRepository;
+    public EstoqueController(EstoqueService estoqueService) {
+        this.estoqueService = estoqueService;
+    }
+
+    @PostMapping("/estoque/entrada")
+    public String entrada(
+            @RequestParam Long produtoId,
+            @RequestParam Integer quantidade,
+            HttpSession session) {
+
+        SessaoDto usuarioLogado = SessaoUtil.usuarioLogado(session);
+
+        // Precisa estar logado
+        if (usuarioLogado == null) {
+            return "redirect:/login";
+        }
+
+        // Somente ADM pode fazer entrada
+        if (!"ADM".equals(usuarioLogado.getPerfil())) {
+            return "redirect:/estoque?erro=semPermissao";
+        }
+
+        try {
+
+            estoqueService.entrada(produtoId, quantidade);
+
+            return "redirect:/estoque?sucesso";
+
+        } catch (RuntimeException e) {
+
+            return "redirect:/estoque?erro=quantidade";
+        }
+    }
+
+
+    @PostMapping("/estoque/saida")
+    public String saida(
+            @RequestParam Long produtoId,
+            @RequestParam Integer quantidade,
+            HttpSession session) {
+
+        SessaoDto usuarioLogado = SessaoUtil.usuarioLogado(session);
+
+        // Precisa estar logado
+        if (usuarioLogado == null) {
+            return "redirect:/login";
+        }
+
+        // Somente ADM pode fazer saída
+        if (!"ADM".equals(usuarioLogado.getPerfil())) {
+            return "redirect:/estoque?erro=semPermissao";
+        }
+
+        try {
+
+            estoqueService.saida(produtoId, quantidade);
+
+            return "redirect:/estoque?sucesso";
+
+        } catch (RuntimeException e) {
+
+            return "redirect:/estoque?erro=estoque";
+        }
     }
 }

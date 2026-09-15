@@ -43,5 +43,4 @@ public class EstoqueEntity {
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
-
 }

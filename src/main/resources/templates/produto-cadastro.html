@@ -22,13 +22,25 @@
             Mister Soluções
         </a>
 
-        <a class="btn btn-outline-light" th:href="@{/logout}">
-            Sair
-        </a>
+        <div class="d-flex align-items-center gap-3">
+
+            <!-- Mostra o usuário logado -->
+            <span class="text-white"
+                  th:if="${session.usuarioLogado != null}"
+                  th:text="${session.usuarioLogado.nome}">
+                Usuário
+            </span>
+
+            <a class="btn btn-outline-light" th:href="@{/logout}">
+                Sair
+            </a>
+
+        </div>
 
     </div>
 
 </nav>
+
 
 <main class="container py-5">
 
@@ -44,10 +56,38 @@
                 Cadastre um novo produto no sistema.
             </p>
 
+
+            <!-- MENSAGEM DE ERRO DE PERMISSÃO -->
+
+            <div
+                    th:if="${param.erro != null and param.erro[0] == 'semPermissao'}"
+                    class="alert alert-danger">
+
+                Você não possui permissão para realizar esta ação.
+                Apenas usuários ADM podem editar ou excluir produtos.
+
+            </div>
+
+
+            <!-- MENSAGEM DE SUCESSO -->
+
+            <div
+                    th:if="${param.sucesso != null}"
+                    class="alert alert-success">
+
+                Operação realizada com sucesso!
+
+            </div>
+
+
+            <!-- FORMULÁRIO -->
+
             <form th:action="${editando} ? @{/produto/editar} : @{/produto/cadastrar}"
-                        th:object="${produto}" method="post">
+                  th:object="${produto}"
+                  method="post">
 
                 <input type="hidden" th:field="*{id}">
+
 
                 <!-- NOME -->
 
@@ -112,27 +152,37 @@
 
                 <div class="d-flex gap-2">
 
-                    <button type="submit"
+                    <button
+                            type="submit"
                             class="btn btn-primary"
                             th:text="${editando} ? 'Salvar alterações' : 'Cadastrar produto'">
+
                         Cadastrar produto
+
                     </button>
 
                     <a
                             class="btn btn-secondary"
                             th:href="@{/home}">
+
                         Voltar
+
                     </a>
 
                 </div>
 
             </form>
 
+
             <hr class="my-5">
+
+
+            <!-- LISTA DE PRODUTOS -->
 
             <h2 class="h4 mb-3">
                 Produtos cadastrados
             </h2>
+
 
             <div class="table-responsive">
 
@@ -141,62 +191,113 @@
                     <thead class="table-dark">
 
                     <tr>
+
                         <th>ID</th>
+
                         <th>Nome</th>
+
                         <th>Descrição</th>
+
                         <th>Preço</th>
+
                         <th>Ações</th>
+
                     </tr>
 
                     </thead>
+
 
                     <tbody>
 
                     <tr th:each="produto : ${produtos}">
 
-                        <td th:text="${produto.id}"></td>
+                        <td th:text="${produto.id}">
+                            1
+                        </td>
 
-                        <td th:text="${produto.nome}"></td>
+                        <td th:text="${produto.nome}">
+                            Produto
+                        </td>
 
-                        <td th:text="${produto.descricao}"></td>
-
-                        <td>
-                            R$
-                            <span th:text="${#numbers.formatDecimal(produto.preco, 1, 2)}">0,00
-                        </span>
-
+                        <td th:text="${produto.descricao}">
+                            Descrição
                         </td>
 
                         <td>
 
-                            <a class="btn btn-sm btn-warning"
-                               th:href="@{/produto/editar/{id}(id=${produto.id})}">
+                            R$
+                            <span
+                                    th:text="${#numbers.formatDecimal(produto.preco, 1, 2)}">
+                                0,00
+                            </span>
+
+                        </td>
+
+
+                        <!-- AÇÕES -->
+
+                        <td>
+
+                            <!--
+                                EDITAR
+                                SOMENTE ADM
+                            -->
+
+                            <a
+                                    th:if="${session.usuarioLogado != null and session.usuarioLogado.perfil == 'ADM'}"
+                                    th:href="@{/produto/editar/{id}(id=${produto.id})}"
+                                    class="btn btn-warning btn-sm">
+
                                 Editar
+
                             </a>
 
-                            <form th:action="@{/produto/excluir/{id}(id=${produto.id})}"
-                                  method="post"
-                                  style="display: inline;"
-                                  onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
 
-                                <button type="submit"
-                                        class="btn btn-sm btn-danger">
+                            <!--
+                                EXCLUIR
+                                SOMENTE ADM
+                            -->
+
+                            <form
+                                    th:if="${session.usuarioLogado != null and session.usuarioLogado.perfil == 'ADM'}"
+                                    th:action="@{/produto/excluir/{id}(id=${produto.id})}"
+                                    method="post"
+                                    class="d-inline">
+
+                                <button
+                                        type="submit"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Tem certeza que deseja excluir este produto?');">
+
                                     Excluir
+
                                 </button>
 
                             </form>
 
+
+                            <!--
+                                FUNCIONÁRIO
+                                Não mostra os botões de edição/exclusão
+                            -->
+
+                            <span
+                                    th:if="${session.usuarioLogado != null and session.usuarioLogado.perfil != 'ADM'}"
+                                    class="text-muted">
+
+                                Sem permissão
+
+                            </span>
+
                         </td>
 
                     </tr>
 
-                    </tr>
+                    <!-- CASO NÃO TENHA PRODUTOS -->
 
                     <tr th:if="${#lists.isEmpty(produtos)}">
 
-                        <td colspan="4" class="text-center text-muted py-4">
-                            Nenhum produto cadastrado.
-                        </td>
+                        <td colspan="5" class="text-center text-muted py-4">Nenhum produto cadastrado.</td>
 
                     </tr>
 
@@ -213,4 +314,5 @@
 </main>
 
 </body>
+
 </html>

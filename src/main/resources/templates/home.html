@@ -25,16 +25,29 @@
         <p class="lead mb-0">Escolha uma das opções abaixo para continuar.</p>
     </div>
 
-    <div class="row g-4">
-        <div class="col-12 col-md-6">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body p-4">
-                    <h2 class="h4">Cadastro de Produto</h2>
-                    <p class="text-muted">Cadastre os produtos do sistema.</p>
-                    <a class="btn btn-primary" th:href="@{/produto/cadastro}">Acessar</a>
-                </div>
+    <div class="col-12 col-md-6"
+         th:if="${usuarioLogado.perfil == 'ADM'}">
+
+        <div class="card h-100 shadow-sm">
+
+            <div class="card-body p-4">
+
+                <h2 class="h4">Cadastro de Produto</h2>
+
+                <p class="text-muted">
+                    Cadastre os produtos do sistema.
+                </p>
+
+                <a class="btn btn-primary"
+                   th:href="@{/produto/cadastro}">
+                    Acessar
+                </a>
+
             </div>
+
         </div>
+
+    </div>
 
         <div class="col-12 col-md-6">
             <div class="card h-100 shadow-sm">

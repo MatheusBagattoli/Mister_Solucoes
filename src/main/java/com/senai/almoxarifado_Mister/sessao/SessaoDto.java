@@ -1,18 +1,21 @@
 package com.senai.almoxarifado_Mister.sessao;
 
 public class SessaoDto {
+
     private Long id;
     private String nome;
     private String email;
     private String matricula;
+    private String perfil;
 
     public SessaoDto() {}
 
-    public SessaoDto(Long id, String nome, String email, String matricula) {
+    public SessaoDto(Long id, String nome, String email, String matricula, String perfil) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.matricula = matricula;
+        this.perfil = perfil;
     }
 
     public Long getId() {
@@ -45,5 +48,13 @@ public class SessaoDto {
 
     public void setMatricula(String matricula) {
         this.matricula = matricula;
+    }
+
+    public String getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(String perfil) {
+        this.perfil = perfil;
     }
 }

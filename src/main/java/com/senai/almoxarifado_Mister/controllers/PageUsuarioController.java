@@ -1,5 +1,6 @@
 package com.senai.almoxarifado_Mister.controllers;
 
+import com.senai.almoxarifado_Mister.entities.UsuarioEntity;
 import com.senai.almoxarifado_Mister.sessao.SessaoDto;
 import com.senai.almoxarifado_Mister.sessao.SessaoUtil;
 import jakarta.servlet.http.HttpSession;
@@ -22,17 +23,46 @@ public class PageUsuarioController {
 
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
+
         SessaoDto usuarioLogado = SessaoUtil.usuarioLogado(session);
+
         if (usuarioLogado == null) {
             return "redirect:/login";
         }
+
         model.addAttribute("usuarioLogado", usuarioLogado);
+
         return "home";
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
+
         SessaoUtil.deslogar(session);
+
         return "redirect:/login";
+    }
+
+
+    // PÁGINA DE CADASTRO DE USUÁRIO
+
+    @GetMapping("/usuario/cadastro")
+    public String cadastroUsuario(HttpSession session, Model model) {
+
+        SessaoDto usuarioLogado = SessaoUtil.usuarioLogado(session);
+
+        // Verifica se está logado
+        if (usuarioLogado == null) {
+            return "redirect:/login";
+        }
+
+        // Somente ADM pode cadastrar funcionários
+        if (!"ADM".equals(usuarioLogado.getPerfil())) {
+            return "redirect:/home?erro=semPermissao";
+        }
+
+        model.addAttribute("usuario", new UsuarioEntity());
+
+        return "usuario-cadastro";
     }
 }
