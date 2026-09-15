@@ -28,7 +28,7 @@ public class UsuarioController {
             SessaoUtil.logar(session, new SessaoDto(usuario.getId(), usuario.getNome(),
                     usuario.getEmail(),
                     usuario.getMatricula(),
-                    usuario.getPerfil()));
+                    usuario.getPerfil(), usuario.getUserRole()));
 
             return "redirect:/home";
 

@@ -36,9 +36,8 @@ public class ProdutoController {
             return "redirect:/login";
         }
 
-        if (!"ADM".equals(usuarioLogado.getPerfil())) {
-            return "redirect:/produto/cadastro?erro=semPermissao";
-        }
+        SessaoDto user_role = SessaoUtil.userRole(session);
+        //metodo que chama salvar no service deve estar assim, private String salvar(ProdutoEntity produto, int userRole)
 
         // Salva o produto
         ProdutoEntity produtoSalvo = produtoRepository.save(produto);

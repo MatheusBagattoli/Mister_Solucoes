@@ -33,10 +33,11 @@ public class UsuarioEntity {
     @Column(nullable = false, length = 20)
     private String perfil;
 
+    @Column(nullable = false)
+    private int userRole;
 
     public UsuarioEntity() {
     }
-
 
     public Long getId() {
         return id;
@@ -107,5 +108,13 @@ public class UsuarioEntity {
 
     public void setPerfil(String perfil) {
         this.perfil = perfil;
+    }
+
+    public int getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(int userRole) {
+        this.userRole = userRole;
     }
 }
