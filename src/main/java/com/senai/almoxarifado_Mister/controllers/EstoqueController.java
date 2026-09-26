@@ -37,7 +37,7 @@ public class EstoqueController {
 
         try {
 
-            estoqueService.entrada(produtoId, quantidade);
+            estoqueService.entrada(produtoId, quantidade, usuarioLogado.getNome());
 
             return "redirect:/estoque?sucesso";
 
@@ -68,7 +68,7 @@ public class EstoqueController {
 
         try {
 
-            estoqueService.saida(produtoId, quantidade);
+            estoqueService.saida(produtoId, quantidade, usuarioLogado.getNome());
 
             return "redirect:/estoque?sucesso";
 

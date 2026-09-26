@@ -19,6 +19,9 @@ public class ProdutoEntity {
         @Column(nullable = false)
         private Double preco;
 
+        @Column(name = "estoque_minimo", nullable = false)
+        private Integer estoqueMinimo = 5;
+
         public ProdutoEntity() {
         }
 
@@ -53,4 +56,12 @@ public class ProdutoEntity {
         public void setPreco(Double preco) {
             this.preco = preco;
         }
+
+        public Integer getEstoqueMinimo() {
+            return estoqueMinimo;
+        }
+
+        public void setEstoqueMinimo(Integer estoqueMinimo) {
+            this.estoqueMinimo = estoqueMinimo;
+    }
 }
