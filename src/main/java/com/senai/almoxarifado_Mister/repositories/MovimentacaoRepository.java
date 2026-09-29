@@ -9,4 +9,9 @@ public interface MovimentacaoRepository extends JpaRepository<MovimentacaoEntity
 
     List<MovimentacaoEntity> findAllByOrderByDataHoraDesc();
 
+    List<MovimentacaoEntity> findByProdutoIdOrderByDataHoraDesc(Long produtoId);
+
+    List<MovimentacaoEntity> findByTipoOrderByDataHoraDesc(String tipo);
+
+    boolean existsByProdutoId(Long produtoId);
 }

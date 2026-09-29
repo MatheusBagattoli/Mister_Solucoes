@@ -68,6 +68,15 @@
 
             </div>
 
+            <!-- MENSAGEM DE PRODUTO COM HISTÓRICO -->
+
+            <div
+                    th:if="${param.erro != null and param.erro[0] == 'possuiHistorico'}"
+                    class="alert alert-warning">
+
+                Este produto não pode ser excluído porque possui histórico de movimentações no estoque.
+
+            </div>
 
             <!-- MENSAGEM DE SUCESSO -->
 
@@ -147,6 +156,27 @@
 
                 </div>
 
+                <div class="mb-4">
+
+                    <label for="estoqueMinimo"
+                           class="form-label">
+                        Estoque mínimo
+                    </label>
+
+                    <input
+                            type="number"
+                            class="form-control"
+                            id="estoqueMinimo"
+                            th:field="*{estoqueMinimo}"
+                            min="0"
+                            required>
+
+                    <div class="form-text">
+                        O sistema exibirá um alerta quando o estoque
+                        atingir ou ficar abaixo deste valor.
+                    </div>
+
+                </div>
 
                 <!-- BOTÕES -->
 

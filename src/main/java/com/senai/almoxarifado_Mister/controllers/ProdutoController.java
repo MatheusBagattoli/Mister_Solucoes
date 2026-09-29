@@ -3,6 +3,7 @@ package com.senai.almoxarifado_Mister.controllers;
 import com.senai.almoxarifado_Mister.entities.EstoqueEntity;
 import com.senai.almoxarifado_Mister.entities.ProdutoEntity;
 import com.senai.almoxarifado_Mister.repositories.EstoqueRepository;
+import com.senai.almoxarifado_Mister.repositories.MovimentacaoRepository;
 import com.senai.almoxarifado_Mister.repositories.ProdutoRepository;
 import com.senai.almoxarifado_Mister.sessao.SessaoDto;
 import com.senai.almoxarifado_Mister.sessao.SessaoUtil;
@@ -15,15 +16,17 @@ public class ProdutoController {
 
     private final ProdutoRepository produtoRepository;
     private final EstoqueRepository estoqueRepository;
+    private final MovimentacaoRepository movimentacaoRepository;
 
     public ProdutoController(
             ProdutoRepository produtoRepository,
-            EstoqueRepository estoqueRepository) {
+            EstoqueRepository estoqueRepository,
+            MovimentacaoRepository movimentacaoRepository) {
 
         this.produtoRepository = produtoRepository;
         this.estoqueRepository = estoqueRepository;
+        this.movimentacaoRepository = movimentacaoRepository;
     }
-
 
     @PostMapping("/produto/cadastrar")
     public String cadastrar(
@@ -36,13 +39,17 @@ public class ProdutoController {
             return "redirect:/login";
         }
 
-        SessaoDto user_role = SessaoUtil.userRole(session);
-        //metodo que chama salvar no service deve estar assim, private String salvar(ProdutoEntity produto, int userRole)
+        if (!"ADM".equals(usuarioLogado.getPerfil())) {
+            return "redirect:/produto/cadastro?erro=semPermissao";
+        }
 
-        // Salva o produto
+        if (produto.getEstoqueMinimo() == null || produto.getEstoqueMinimo() < 0) {
+
+            produto.setEstoqueMinimo(5);
+        }
+
         ProdutoEntity produtoSalvo = produtoRepository.save(produto);
 
-        // Cria o estoque automaticamente com quantidade 0
         EstoqueEntity estoque = new EstoqueEntity();
 
         estoque.setProduto(produtoSalvo);
@@ -52,7 +59,6 @@ public class ProdutoController {
 
         return "redirect:/produto/cadastro?sucesso";
     }
-
 
     @PostMapping("/produto/editar")
     public String editar(
@@ -69,11 +75,14 @@ public class ProdutoController {
             return "redirect:/produto/cadastro?erro=semPermissao";
         }
 
+        if (produto.getEstoqueMinimo() == null || produto.getEstoqueMinimo() < 0) {
+            produto.setEstoqueMinimo(5);
+        }
+
         produtoRepository.save(produto);
 
         return "redirect:/produto/cadastro?sucesso";
     }
-
 
     @PostMapping("/produto/excluir/{id}")
     public String excluir(
@@ -90,12 +99,16 @@ public class ProdutoController {
             return "redirect:/produto/cadastro?erro=semPermissao";
         }
 
-        // Primeiro remove o estoque
+        if (movimentacaoRepository.existsByProdutoId(id)) {
+
+            return "redirect:/produto/cadastro?erro=possuiHistorico";
+        }
+
         estoqueRepository.findByProdutoId(id).ifPresent(estoqueRepository::delete);
 
-        // Depois remove o produto
         produtoRepository.deleteById(id);
 
         return "redirect:/produto/cadastro?sucesso";
     }
 }
+
