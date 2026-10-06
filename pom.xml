@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>com.senai</groupId>
-    <artifactId>sa-login-home-mysql</artifactId>
+    <artifactId>SA</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
